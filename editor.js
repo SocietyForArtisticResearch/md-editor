@@ -1,2 +1,2 @@
 "use strict";
-console.log("TS file loaded...");
+console.log("TS file loaded..;.");
