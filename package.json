@@ -1,0 +1,20 @@
+{
+  "name": "md-editor",
+  "version": "1.0.0",
+  "description": "A simple markdown editor for the Research Catalogue",
+  "main": "editor.js",
+    "scripts": {
+	"test": "we are live!",
+	"tsc": "tsc",
+	"tsc:w": "tsc -w",
+	"lite": "lite-server",
+	"start": "concurrently \"npm run tsc:w\" \"npm run lite\" "
+  },
+  "author": "Luc Döbereiner, Casper Schipper",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "lite-server": "^2.4.0",
+    "typescript": "^3.2.2"
+  }
+}
