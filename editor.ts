@@ -12,7 +12,7 @@ export class MDEditor {
     listeners: { [key: string]: ((data: any) => void)[]; } = {}
     changed: boolean = false;
     renderTimer: number;
-
+    timeInactivity: number = 0;
 
     constructor(area: HTMLTextAreaElement, target: HTMLElement) {
         this.textArea = area;
@@ -30,8 +30,11 @@ export class MDEditor {
         this.renderTimer = setInterval(() => {
             if (self.changed) {
                 this.targetArea.innerHTML = md.render(this.getValue());
-                self.changed = false;
                 this.emit('changed', null);
+                self.changed = false;
+                this.timeInactivity = 0;
+            } else {
+                ++this.timeInactivity;
             }
         }, 1000);
 
