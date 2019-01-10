@@ -8,20 +8,19 @@ const md = new MarkdownIt({ html: true, typographer: true });
 //console.log("TS file loaded....");
 export class MDEditor {
     textArea: HTMLTextAreaElement;
-    targetArea: HTMLTextAreaElement;
-    listeners: { [key: string]: (data: any) => void; } = {}
+    targetArea: HTMLElement;
+    listeners: { [key: string]: ((data: any) => void)[]; } = {}
     changed: boolean = false;
     renderTimer: number;
 
 
-    constructor(area: HTMLTextAreaElement, target: HTMLTextAreaElement) {
+    constructor(area: HTMLTextAreaElement, target: HTMLElement) {
         this.textArea = area;
         this.textArea.spellcheck = true;
         this.textArea.disabled = false;
         this.textArea.readOnly = false;
 
         this.targetArea = target;
-        this.targetArea.readOnly = true;
 
         let self = this;
         this.textArea.addEventListener('input', function () {
@@ -32,11 +31,11 @@ export class MDEditor {
             if (self.changed) {
                 this.targetArea.innerHTML = md.render(this.getValue());
                 self.changed = false;
+                this.emit('changed', null);
             }
         }, 1000);
 
     }
-
 
     public setValue(text: string) {
         this.textArea.value = text;
@@ -48,12 +47,25 @@ export class MDEditor {
     }
 
 
-
-
-    //    addListener(label, callback) { }
+    public addListener(label: string, callback: () => void) {
+        if (this.listeners[label] == undefined) {
+            this.listeners[label] = [callback];
+        } else {
+            this.listeners[label].push(callback);
+        }
+    }
     //  removeListener(label, callback) { }
-    //  emit(label, ...args) {  }
+
+    private emit(label: string, data: any) {
+        this.listeners[label].forEach((listener) => {
+            listener(data);
+        });
+
+    }
 }
 
-var editor = new MDEditor(<HTMLTextAreaElement>document.getElementById('md-editor'), <HTMLTextAreaElement>document.getElementById('md-preview'));
+// Testing
+var editor = new MDEditor(<HTMLTextAreaElement>document.getElementById('md-editor'), <HTMLElement>document.getElementById('md-preview'));
 editor.setValue("Welcome...type markdown.");
+editor.addListener('changed', () => console.log("changed event..."));
+
